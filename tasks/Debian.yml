@@ -1,0 +1,4 @@
+---
+- name: install ttyrec deb package
+  apt:
+    deb: "{{ ttyrec_package_url }}"

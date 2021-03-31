@@ -1,7 +1,13 @@
 ---
 # tasks file for ovhbastion
+- name: include distribution family variables
+  include_vars: '{{ item }}'
+  with_first_found:
+    - '{{ ansible_facts.os_family }}.yml'
+    - '{{ ansible_facts.distribution }}.yml'
+
 - name: install python2 pip
-  apt:
+  package:
     update_cache: yes
     name:
       - python-pip
@@ -9,7 +15,7 @@
   when: ansible_facts['python_version'] is version('3', '<=')
 
 - name: install python3 pip
-  apt:
+  package:
     update_cache: yes
     name:
       - python3-pip
@@ -18,6 +24,12 @@
 - name: install pexpect
   pip:
     name: pexpect
+
+- name: include distribution-specific tasks
+  include_tasks: '{{ item }}'
+  with_first_found:
+    - '{{ ansible_facts.os_family }}.yml'
+    - '{{ ansible_facts.distribution }}.yml'
 
 - name: create directory for bastion install
   file:
@@ -37,10 +49,6 @@
     mode: "0775"
     extra_opts:
       - --strip-components=1
-
-- name: install ttyrec deb package
-  apt:
-    deb: "{{ ttyrec_package_url }}"
 
 - name: install bastion packages
   shell:
