@@ -1,10 +1,42 @@
 ---
-# TODO: open up user definition to accept pubkey
+- name: gather group data
+  getent:
+    database: group
+
+# TODO: handle groups, egress keys
 - name: ensure initial users exist on bastion
   become: no
   delegate_to: localhost
-  command: "ssh {{ bastion_superadmin_uname }}@{{ ansible_host }} -p {{ ansible_port }} -- --osh accountCreate --account {{ item.name }} --uid-auto --public-key {{ item.public_key }}"
+  command: "{{ bastion_ansible_ssh_command }} accountCreate --account {{ item.name }} --uid-auto --public-key {{ item.public_key }}"
   loop: "{{ bastion_initial_users }}"
   when: item.name not in getent_passwd.keys()
   tags:
     - bastion_users
+
+- name: fasfasfas
+  debug:
+    var: getent_group
+
+- name: ensure initial groups exist on bastion
+  become: no
+  delegate_to: localhost
+  command: "{{ bastion_ansible_ssh_command }} groupCreate --group {{ item.name }} --owner {{ item.owner }} --algo {{ item.algorithm | default('ed25519')}}"
+  loop: "{{ bastion_initial_groups }}"
+  # ovhbastion prefixes bastion groups with `key`
+  when: "'key{{ item.name }}' not in getent_group.keys()"
+  tags:
+    - bastion_users
+
+# disabled: need to define gatekeeper handling for groupAddMember plugin
+- name: ensure users belong to expected groups
+  become: no
+  delegate_to: localhost
+  command: "{{ bastion_ansible_ssh_command }} groupAddMember --account {{ item.0.name }} --group {{ item.1 }}"
+  with_subelements:
+    - "{{ bastion_initial_users }}"
+    - groups
+    - flags:
+      skip_missing: true
+  tags:
+    - bastion_users
+  when: false
