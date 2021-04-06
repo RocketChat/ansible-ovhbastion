@@ -1,0 +1,10 @@
+---
+# TODO: open up user definition to accept pubkey
+- name: ensure initial users exist on bastion
+  become: no
+  delegate_to: localhost
+  command: "ssh {{ bastion_superadmin_uname }}@{{ ansible_host }} -p {{ ansible_port }} -- --osh accountCreate --account {{ item.name }} --uid-auto --public-key {{ item.public_key }}"
+  loop: "{{ bastion_initial_users }}"
+  when: item.name not in getent_passwd.keys()
+  tags:
+    - bastion_users
