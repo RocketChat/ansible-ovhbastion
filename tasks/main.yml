@@ -111,5 +111,10 @@
   tags:
     - bastion_setup
 
+- name: restart sshd to apply changes
+  service:
+    name: sshd
+    state: restarted
+
 - name: run user bootstrap tasks
   include_tasks: users.yml
