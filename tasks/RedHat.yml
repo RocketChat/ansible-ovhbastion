@@ -1,0 +1,6 @@
+---
+- name: install ttyrec rpm package
+  yum:
+    name: '{{ ttyrec_package_url }}'
+    disable_gpg_check: yes  # TODO: installation fails without this. verify how to run gpg checks from github
+    state: present

@@ -1,0 +1,2 @@
+---
+ttyrec_package_url: "https://github.com/ovh/ovh-ttyrec/releases/download/v{{ ttyrec_version }}/ovh-ttyrec_{{ ttyrec_version }}_amd64.deb"
