@@ -47,6 +47,8 @@
     - hosts
     - flags:
       skip_missing: true
+  tags:
+    - bastion_users
 
 # disabled: need to define gatekeeper handling for groupAddMember plugin
 - name: ensure groups have host accesses installed
@@ -58,4 +60,6 @@
     - hosts
     - flags:
       skip_missing: true
+  tags:
+    - bastion_users
   when: false
