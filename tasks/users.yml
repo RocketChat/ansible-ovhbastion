@@ -12,10 +12,6 @@
   tags:
     - bastion_users
 
-- name: fasfasfas
-  debug:
-    var: getent_group
-
 - name: ensure initial groups exist on bastion
   become: no
   delegate_to: localhost
@@ -40,6 +36,8 @@
     - bastion_users
   when: false
 
+# NOTE: `host` can be a CIDR range
+# although this operation doesn't fail on repeated adds, it always reports as changed
 - name: ensure users have host accesses installed
   become: no
   delegate_to: localhost
@@ -49,3 +47,15 @@
     - hosts
     - flags:
       skip_missing: true
+
+# disabled: need to define gatekeeper handling for groupAddMember plugin
+- name: ensure groups have host accesses installed
+  become: no
+  delegate_to: localhost
+  command: "{{ bastion_ansible_ssh_command }} groupAddServer --group {{ item.0.name }} --host {{ item.1.host }} --user {{ item.1.user }} --port {{ item.1.port | default(22) }} --force"
+  with_subelements:
+    - "{{ bastion_initial_groups }}"
+    - hosts
+    - flags:
+      skip_missing: true
+  when: false
