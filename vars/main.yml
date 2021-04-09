@@ -1,2 +1,2 @@
 ---
-bastion_ansible_ssh_command: "ssh {{ bastion_superadmin_uname }}@{{ ansible_host }} -p {{ ansible_port }} -- --osh"
+bastion_ansible_ssh_command: "ssh {{ bastion_superadmin_uname }}@{{ inventory_hostname }} -p {{ ansible_port | default(22) }} -- --osh"
