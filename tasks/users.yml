@@ -31,7 +31,7 @@
     - "{{ bastion_initial_users }}"
     - groups
     - flags:
-      skip_missing: true
+        skip_missing: true
   tags:
     - bastion_users
   when: false
@@ -46,7 +46,7 @@
     - "{{ bastion_initial_users }}"
     - hosts
     - flags:
-      skip_missing: true
+        skip_missing: true
   tags:
     - bastion_users
 
@@ -59,7 +59,7 @@
     - "{{ bastion_initial_groups }}"
     - hosts
     - flags:
-      skip_missing: true
+        skip_missing: true
   tags:
     - bastion_users
   when: false

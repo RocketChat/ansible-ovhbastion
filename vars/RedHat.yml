@@ -1,3 +1,2 @@
 ---
 ttyrec_package_url: "https://github.com/ovh/ovh-ttyrec/releases/download/v{{ ttyrec_version }}/ovh-ttyrec-{{ ttyrec_version }}-1.x86_64.rpm"
-
