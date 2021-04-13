@@ -1,0 +1,25 @@
+---
+- name: save master pubkey
+  become_user: root
+  slurp:
+    src: ~/.ssh/id_master2slave.pub
+  register: master_pubkey
+
+- name: save master ip address
+  uri:
+    url: https://ipinfo.io/ip
+    return_content: yes
+  register: master_ipv4
+
+- name: configure sync watcher
+  template:
+    src: osh-sync-watcher.sh.j2
+    dest: /etc/bastion/osh-sync-watcher.sh
+    mode: '0644'
+    state: present
+
+- name: enable sync watcher service
+  service:
+    name: osh-sync-watcher
+    enabled: yes
+    state: started

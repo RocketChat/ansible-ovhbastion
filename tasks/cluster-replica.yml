@@ -1,0 +1,13 @@
+---
+- name: install master pubkey in slaves
+  authorized_key:
+    key: "{{ master_pubkey['content'] | b64decode }}"
+    key_options: "from:{{ master_ipv4.content }},restrict"
+    state: present
+
+- name: disable plugin usage in slave hosts
+  lineinfile:
+    path: /etc/bastion/bastion.conf
+    regexp: '^"readOnlySlaveMode'
+    line: '"readOnlySlaveMode: 1,"'
+    state: present
