@@ -3,20 +3,25 @@
   become_user: root
   slurp:
     src: ~/.ssh/id_master2slave.pub
-  register: master_pubkey
+  register: var__master_pubkey
 
 - name: save master ip address
   uri:
     url: https://ipinfo.io/ip
     return_content: yes
-  register: master_ipv4
+  register: var__master_ipv4
+
+- name: adds dummy host to hold facts
+  add_host:
+    name: "{{ bastion_placeholder_hostname }}"
+    master_pubkey: "{{ var__master_pubkey['content'] | b64decode }}"
+    master_ipv4: "{{ var__master_ipv4.content }}"
 
 - name: configure sync watcher
   template:
     src: osh-sync-watcher.sh.j2
     dest: /etc/bastion/osh-sync-watcher.sh
     mode: '0644'
-    state: present
 
 - name: enable sync watcher service
   service:

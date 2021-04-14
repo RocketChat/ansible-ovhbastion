@@ -19,3 +19,5 @@ bastion_superadmin_uname: "primaryadmin"  # name of bastion's superadmin account
 # bastion_interactive_mode_timeout: "60"
 # bastion_mfa_password_max_days: "90"
 bastion_initial_users: []
+bastion_initial_groups: []
+bastion_placeholder_hostname: bastion_fact_holder

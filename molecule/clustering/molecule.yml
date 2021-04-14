@@ -1,0 +1,34 @@
+---
+dependency:
+  name: galaxy
+driver:
+  name: vagrant
+platforms:
+  - name: bastionprimary
+    box: generic/centos8
+    groups:
+      - bastion
+    children:
+      - bastion_primary
+  - name: bastionreplica1
+    box: generic/centos8
+    groups:
+      - bastion
+    children:
+      - bastion_replica
+  - name: bastionreplica2
+    box: generic/centos8
+    groups:
+      - bastion
+    children:
+      - bastion_replica
+provisioner:
+  name: ansible
+  inventory:
+    group_vars:
+      bastion_primary:
+        bastion_node_role: primary
+      bastion_replica:
+        bastion_node_role: replica
+verifier:
+  name: ansible

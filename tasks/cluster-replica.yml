@@ -1,8 +1,9 @@
 ---
 - name: install master pubkey in slaves
   authorized_key:
-    key: "{{ master_pubkey['content'] | b64decode }}"
-    key_options: "from:{{ master_ipv4.content }},restrict"
+    key: "{{ hostvars['bastion_fact_holder']['master_pubkey'] }}"
+    key_options: "from:{{ hostvars['bastion_fact_holder']['master_ipv4'] }},restrict"
+    user: "{{ bastion_sync_user }}"
     state: present
 
 - name: disable plugin usage in slave hosts
