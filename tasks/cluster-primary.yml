@@ -1,0 +1,24 @@
+---
+- name: save master pubkey
+  become_user: root
+  slurp:
+    src: ~/.ssh/id_master2slave.pub
+  register: var__master_pubkey
+
+- name: adds dummy host to hold facts
+  add_host:
+    name: "{{ bastion_placeholder_hostname }}"
+    master_pubkey: "{{ var__master_pubkey['content'] | b64decode }}"
+    master_ipv4: "{{ inventory_hostname }}"
+
+- name: configure sync watcher
+  template:
+    src: osh-sync-watcher.sh.j2
+    dest: /etc/bastion/osh-sync-watcher.sh
+    mode: '0644'
+
+- name: enable sync watcher service
+  service:
+    name: osh-sync-watcher
+    enabled: yes
+    state: started

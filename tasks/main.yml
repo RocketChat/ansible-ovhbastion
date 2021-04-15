@@ -118,3 +118,15 @@
 
 - name: run user bootstrap tasks
   include_tasks: users.yml
+
+- name: bootstrap primary clustering node
+  include_tasks: cluster-primary.yml
+  when:
+    - bastion_node_role is defined
+    - bastion_node_role == "primary"
+
+- name: bootstrap replication nodes
+  include_tasks: cluster-replica.yml
+  when:
+    - bastion_node_role is defined
+    - bastion_node_role == "replica"

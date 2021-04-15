@@ -1,0 +1,43 @@
+---
+dependency:
+  name: galaxy
+driver:
+  name: vagrant
+platforms:
+  - name: bastionprimary
+    box: generic/centos8
+    groups:
+      - bastion
+    children:
+      - bastion_primary
+    interfaces:
+      - network_name: private_network
+        ip: "192.168.22.10"
+  - name: bastionreplica1
+    box: generic/centos8
+    groups:
+      - bastion
+    children:
+      - bastion_replica
+    interfaces:
+      - network_name: private_network
+        ip: "192.168.22.11"
+  - name: bastionreplica2
+    box: generic/centos8
+    groups:
+      - bastion
+    children:
+      - bastion_replica
+    interfaces:
+      - network_name: private_network
+        ip: "192.168.22.12"
+provisioner:
+  name: ansible
+  inventory:
+    group_vars:
+      bastion_primary:
+        bastion_node_role: primary
+      bastion_replica:
+        bastion_node_role: replica
+verifier:
+  name: ansible

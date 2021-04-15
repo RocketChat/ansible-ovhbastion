@@ -1,0 +1,13 @@
+---
+- name: Converge
+  hosts: all
+  become: yes
+  tasks:
+    - name: "Include ansible-ovhbastion"
+      include_role:
+        name: "ansible-ovhbastion"
+      vars:
+        ssh_key: ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKRhS89ZWIBoQ5FZU2jSKRqQ4l38ghFmm2OCE/ZpmKUg daisy@daisy
+        bastion_name: "test-bastion"
+        bastion_superadmin_uname: ldelelis
+        bastion_sync_user: bastionsync
