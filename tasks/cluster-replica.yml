@@ -1,8 +1,14 @@
 ---
+- name: ensure sync user is present
+  user:
+    name: "{{ bastion_sync_user }}"
+    state: present
+    shell: /bin/bash
+
 - name: install master pubkey in slaves
   authorized_key:
     key: "{{ hostvars['bastion_fact_holder']['master_pubkey'] }}"
-    key_options: "from:{{ hostvars['bastion_fact_holder']['master_ipv4'] }},restrict"
+    key_options: "from=\"{{ hostvars['bastion_fact_holder']['master_ipv4'] }}\",restrict"
     user: "{{ bastion_sync_user }}"
     state: present
 

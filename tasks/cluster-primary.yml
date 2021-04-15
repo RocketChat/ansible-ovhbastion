@@ -5,17 +5,11 @@
     src: ~/.ssh/id_master2slave.pub
   register: var__master_pubkey
 
-- name: save master ip address
-  uri:
-    url: https://ipinfo.io/ip
-    return_content: yes
-  register: var__master_ipv4
-
 - name: adds dummy host to hold facts
   add_host:
     name: "{{ bastion_placeholder_hostname }}"
     master_pubkey: "{{ var__master_pubkey['content'] | b64decode }}"
-    master_ipv4: "{{ var__master_ipv4.content }}"
+    master_ipv4: "{{ inventory_hostname }}"
 
 - name: configure sync watcher
   template:
