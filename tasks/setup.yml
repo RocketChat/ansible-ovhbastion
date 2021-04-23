@@ -1,0 +1,117 @@
+---
+- name: gather user data
+  getent:
+    database: passwd
+
+# tasks file for ovhbastion
+- name: include distribution family variables
+  include_vars: '{{ item }}'
+  with_first_found:
+    - '{{ ansible_facts.os_family }}.yml'
+    - '{{ ansible_facts.distribution }}.yml'
+
+- name: install python2 pip
+  package:
+    update_cache: yes
+    name:
+      - python-pip
+      - python-setuptools
+  when: ansible_facts['python_version'] is version('3', '<=')
+  tags:
+    - bastion_setup
+
+- name: install python3 pip
+  package:
+    update_cache: yes
+    name:
+      - python3-pip
+  when: ansible_facts['python_version'] is version('3', '>=')
+  tags:
+    - bastion_setup
+
+- name: install pexpect
+  pip:
+    name: pexpect
+  tags:
+    - bastion_setup
+
+- name: include distribution-specific tasks
+  include_tasks: '{{ item }}'
+  with_first_found:
+    - '{{ ansible_facts.os_family }}.yml'
+    - '{{ ansible_facts.distribution }}.yml'
+
+- name: create directory for bastion install
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: root
+    group: root
+    mode: "0775"
+  loop:
+    - "{{ bastion_install_dir }}"
+  tags:
+    - bastion_setup
+
+- name: extract bastion files to install directory
+  unarchive:
+    src: "{{ bastion_package_url }}"
+    dest: "{{ bastion_install_dir }}"
+    remote_src: yes
+    mode: "0775"
+    extra_opts:
+      - --strip-components=1
+  tags:
+    - bastion_setup
+
+- name: install bastion packages
+  shell:
+    cmd: "{{ bastion_install_dir }}/bin/admin/packages-check.sh -i -s -t >> .package-install-log"
+    chdir: "{{ bastion_install_dir }}"
+    creates: .package-install-log
+  tags:
+    - bastion_setup
+
+- name: complete basic system configuration
+  shell:
+    cmd: "{{ bastion_install_dir }}/bin/admin/install --new-install --no-wait >> .config-log"
+    chdir: "{{ bastion_install_dir }}"
+    creates: .config-log
+  tags:
+    - bastion_setup
+
+- name: verify perl module installation
+  shell:
+    cmd: "{{ bastion_install_dir }}/bin/dev/perl-check.sh >> .perlcheck-log"
+    chdir: "{{ bastion_install_dir }}"
+    creates: .perlcheck-log
+  tags:
+    - bastion_setup
+
+- name: replace default configuration file
+  template:
+    src: bastion_conf.j2
+    dest: /etc/bastion/bastion.conf
+    owner: root
+    group: root
+    mode: '0644'
+  tags:
+    - bastion_setup
+
+- name: complete initial account setup
+  expect:
+    command: "{{ bastion_install_dir }}/bin/admin/setup-first-admin-account.sh {{ bastion_superadmin_uname }} auto"
+    responses:
+      (?i)passphrase: "{{ ssh_key }}"
+    chdir: "{{ bastion_install_dir }}"
+  when:
+    - bastion_create_admin | bool
+    - bastion_superadmin_uname not in getent_passwd.keys()
+  no_log: true
+  tags:
+    - bastion_setup
+
+- name: restart sshd to apply changes
+  service:
+    name: sshd
+    state: restarted

@@ -31,7 +31,7 @@
     - "{{ bastion_initial_users }}"
     - groups
     - flags:
-        skip_missing: true
+      skip_missing: true
   tags:
     - bastion_users
   when: false
@@ -46,7 +46,7 @@
     - "{{ bastion_initial_users }}"
     - hosts
     - flags:
-        skip_missing: true
+      skip_missing: true
   tags:
     - bastion_users
 
@@ -59,7 +59,24 @@
     - "{{ bastion_initial_groups }}"
     - hosts
     - flags:
-        skip_missing: true
+      skip_missing: true
   tags:
     - bastion_users
   when: false
+
+- name: save egress keys from users
+  become: no
+  delegate_to: localhost
+  shell: "{{ bastion_ansible_ssh_command }} accountListEgressKeys --account {{ item.name }} --quiet | grep '^from='"
+  with_items: "{{ bastion_initial_users }}"
+  register: bastion_users_ssh_keys
+  tags:
+    - bastion_users
+
+- name: create placeholder host
+  add_host:
+    name: bastion_fact_placeholder
+    # this one is complicated: iterate over the list of users, pair them with
+    # their public key, and then turn the list of lists into a dict, with
+    # username as key, and public key as value
+    user_key_map: "{{ dict(bastion_initial_users | map(attribute='name') | zip(bastion_users_ssh_keys.results | map(attribute='stdout'))) }}"

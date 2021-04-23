@@ -1,0 +1,14 @@
+---
+# user_key_map is a mapping of bastion user to public egress key
+#
+# bastion_target_groups is a map of node users to a list of authorized bastion users
+#
+# So we need to go role by role, then by authorized user, and get its pubkey
+# from the placeholder facts
+- name: install bastion egress key on target role users
+  authorized_key:
+    user: "{{ item.0.key }}"
+    key: "{{ hostvars['bastion_fact_placeholder']['user_key_map'][item.1] }}"
+  with_subelements:
+    - "{{ bastion_target_groups | dict2items }}"
+    - value
