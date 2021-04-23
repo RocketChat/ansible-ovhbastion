@@ -16,4 +16,3 @@
   when:
     - bastion_node_role is defined
     - bastion_node_role == "target"
-
