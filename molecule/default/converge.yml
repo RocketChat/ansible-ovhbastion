@@ -7,12 +7,13 @@
       include_role:
         name: "ansible-ovhbastion"
       vars:
+        bastion_node_role: bastion
         ssh_key: ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKRhS89ZWIBoQ5FZU2jSKRqQ4l38ghFmm2OCE/ZpmKUg daisy@daisy
         bastion_name: "test-bastion"
         bastion_superadmin_uname: ldelelis
         bastion_initial_groups:
           - name: test
-            owner: lucio.delelis
+            owner: ldelelis
             hosts:
               - host: rocket.chat
                 user: random
@@ -20,7 +21,7 @@
               - host: contoso.com
                 user: root
           - name: foo
-            owner: lucio.delelis
+            owner: ldelelis
         bastion_initial_users:
           - name: lucio.delelis
             public_key: ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKRhS89ZWIBoQ5FZU2jSKRqQ4l38ghFmm2OCE/ZpmKUg daisy@daisy

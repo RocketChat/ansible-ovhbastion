@@ -34,7 +34,6 @@
       skip_missing: true
   tags:
     - bastion_users
-  when: false
 
 # NOTE: `host` can be a CIDR range
 # although this operation doesn't fail on repeated adds, it always reports as changed
@@ -73,7 +72,6 @@
   # TODO: we should detect when host access was first installed vs repeated
   # parsing a --json-greppable response might be helpful for this
   changed_when: False
-  when: false
 
 - name: save egress keys from users
   become: no
