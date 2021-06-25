@@ -1,2 +1,3 @@
+---
 bastion_database_subnet: "10.11.20.0/24"
 bastion_worker_subnet: "10.11.100.0/24"
