@@ -1,13 +1,4 @@
 ---
-- name: include regional vars
-  include_vars:
-    file: "{{ item }}.yml"
-  loop:
-    - use1
-    - euc1
-    - svc1
-  when: inventory_hostname in groups[item]
-
 - name: run bastion setup tasks
   include_tasks: setup.yml
   when:

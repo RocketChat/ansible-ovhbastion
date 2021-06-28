@@ -36,26 +36,7 @@
   tags:
     - bastion_users
 
-- name: ensure groups have host accesses installed (CIDRs)
-  become: no
-  delegate_to: localhost
-  command: "{{ bastion_ansible_ssh_command }} groupAddServer \
-            --group {{ item.0.name }} \
-            --host {{ lookup('vars', item.1.host) }} \
-            --user {{ item.0.name }} \
-            --port {{ item.1.port | default(22) }} \
-            --force"
-  with_subelements:
-    - "{{ bastion_initial_groups }}"
-    - hosts_vars
-    - flags:
-      skip_missing: true
-  register: bastion_cidr_host_group
-  tags:
-    - bastion_users
-  changed_when: "'was added to group' in bastion_cidr_host_group.stdout"
-
-- name: ensure groups have host accesses installed (statics)
+- name: ensure groups have host accesses installed
   become: no
   delegate_to: localhost
   command: "{{ bastion_ansible_ssh_command }} groupAddServer \

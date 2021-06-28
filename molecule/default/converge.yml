@@ -20,6 +20,7 @@
                 port: 2222
               - host: contoso.com
                 user: root
+              - host: 172.16.100.0/24
           - name: foo
             owner: ldelelis
         bastion_initial_users:
@@ -27,6 +28,7 @@
             public_key: ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKRhS89ZWIBoQ5FZU2jSKRqQ4l38ghFmm2OCE/ZpmKUg daisy@daisy
             hosts:
               - rocket.chat
+              - 172.16.100.0/24
           - name: someone.else
             public_key: ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKRhS89ZWIBoQ5FZU2jSKRqQ4l38ghFmm2OCE/ZpmKUg daisy@daisy
             groups:
